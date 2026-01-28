@@ -59,7 +59,7 @@ public class MainMenu : MonoBehaviour
     public void ConfirmNewGame()
     {
         NetworkRunnerHandler networkRunnerHandler = FindFirstObjectByType<NetworkRunnerHandler>();
-        networkRunnerHandler.CreateGame("");
+        networkRunnerHandler.CreateGame(sessionNameInput.text);
 
         HidePanels();
 
@@ -71,8 +71,6 @@ public class MainMenu : MonoBehaviour
         HidePanels();
 
         StatusPanel.SetActive(true);
-
-
     }
 
     private void UsernameTyped()
