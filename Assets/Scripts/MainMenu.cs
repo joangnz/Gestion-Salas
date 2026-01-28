@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class MainMenu : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class MainMenu : MonoBehaviour
     {
         username.onValueChanged.AddListener(delegate { UsernameTyped(); });
         HidePanels();
-        RoomBrowser.gameObject.SetActive(true);
+        PlayerDetails.SetActive(true);
     }
 
     public void SetUsername(string username)
@@ -42,13 +43,13 @@ public class MainMenu : MonoBehaviour
         SetUsername(username.text);
         //SceneManager.LoadScene("GameScene");
 
-        NetworkRunnerHandler networkRunnerHandler = Object.FindFirstObjectByType<NetworkRunnerHandler>();
+        NetworkRunnerHandler networkRunnerHandler = FindFirstObjectByType<NetworkRunnerHandler>();
         networkRunnerHandler.OnJoinLobby();
 
         HidePanels();
         RoomBrowser.gameObject.SetActive(true);
 
-        RoomBrowser.ClearList();
+        FindFirstObjectByType<SessionHandler>(FindObjectsInactive.Include).OnLookingForGameSessions();
     }
 
     public void NewGame()
@@ -66,6 +67,15 @@ public class MainMenu : MonoBehaviour
         HidePanels();
 
         StatusPanel.SetActive(true);
+    }
+
+    public void OnJoiningServer()
+    {
+        HidePanels();
+
+        StatusPanel.SetActive(true);
+
+
     }
 
     private void UsernameTyped()

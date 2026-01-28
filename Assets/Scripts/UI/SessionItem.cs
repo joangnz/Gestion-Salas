@@ -21,9 +21,10 @@ public class SessionItem: MonoBehaviour
         sessionNameText.text = sessionInfo.Name;
         playerCountText.text = $"{sessionInfo.PlayerCount}/{sessionInfo.MaxPlayers}";
 
-        bool joinable = sessionInfo.PlayerCount >= sessionInfo.MaxPlayers;
+        bool joinable = sessionInfo.PlayerCount < sessionInfo.MaxPlayers;
 
         joinButton.gameObject.SetActive(joinable);
+        Debug.Log(joinable);
     }
 
     public void OnClick()

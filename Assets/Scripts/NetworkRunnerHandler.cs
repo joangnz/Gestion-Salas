@@ -10,16 +10,21 @@ using UnityEngine.SceneManagement;
 public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 {
     private NetworkRunner _runner;
+    SessionHandler _sessionHandler;
 
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new();
 
     private InputAction moveAction;
 
+    private void Awake()
+    {
+        _sessionHandler = FindFirstObjectByType<SessionHandler>(FindObjectsInactive.Include);
+    }
+
     async void StartGame(GameMode mode, string sessionName)
     {
         // Create the Fusion runner and let it know that we will be providing user input
-        _runner = gameObject.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;
 
         moveAction = InputSystem.actions.FindAction("Move");
@@ -86,21 +91,29 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data) { }
     public void OnSceneLoadDone(NetworkRunner runner) { }
     public void OnSceneLoadStart(NetworkRunner runner) { }
-    public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList) { }
+    public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
+    {
+        Debug.Log("UpdatedList");
+        if (_sessionHandler == null) return;
+
+        if (sessionList.Count == 0) _sessionHandler.OnNoSessionFound();
+        else
+        {
+            _sessionHandler.ClearList();
+
+            foreach (SessionInfo sessionInfo in sessionList)
+            {
+                _sessionHandler.AddToList(sessionInfo);
+            }
+        }
+    }
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
     public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message) { }
 
-    private void OnGUI()
-    {
-        if (_runner != null)
-        {
-            if (GUI.Button(new Rect(0, 0, 200, 40), "Server")) StartGame(GameMode.Server, "TestRoom");
-            if (GUI.Button(new Rect(0, 40, 200, 40), "Join")) StartGame(GameMode.Client, "TestRoom");
-        }
-    }
-
     public void OnJoinLobby()
     {
+        _runner = gameObject.AddComponent<NetworkRunner>();
+
         var clientTask = JoinLobby();
     }
 
@@ -122,7 +135,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     public void CreateGame(string sessionName)
     {
-        StartGame(GameMode.Server, sessionName);
+        StartGame(GameMode.Host, sessionName);
     }
 
     public void JoinGame(SessionInfo sessionInfo)

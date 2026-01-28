@@ -12,6 +12,11 @@ public class SessionHandler : MonoBehaviour
 
     [SerializeField] private VerticalLayoutGroup verticalLayoutGroup;
 
+    private void Awake()
+    {
+        ClearList();
+    }
+
     public void AddToList(SessionInfo sessionInfo)
     {
         SessionItem addedSessionItem = Instantiate(sessionItemPrefab, verticalLayoutGroup.transform).GetComponent<SessionItem>();
@@ -21,19 +26,28 @@ public class SessionHandler : MonoBehaviour
         addedSessionItem.OnJoinSession += AddedSessionItem_OnJoinSession;
     }
 
-    private void AddedSessionItem_OnJoinSession(SessionInfo obj)
+    private void AddedSessionItem_OnJoinSession(SessionInfo sessionInfo)
     {
-        SceneManager.LoadScene("GameScene");
+        NetworkRunnerHandler networkRunnerHandler = FindFirstObjectByType<NetworkRunnerHandler>();
+
+        networkRunnerHandler.JoinGame(sessionInfo);
+
+        MainMenu mainMenu = FindFirstObjectByType<MainMenu>();
+        mainMenu.OnJoiningServer();
     }
 
-    private void OnNoSessionFound()
+    public void OnNoSessionFound()
     {
+        ClearList();
+
         statusText.text = "No game session found";
         statusText.gameObject.SetActive(true);
     }
 
-    private void OnLookingForGameSessions()
+    public void OnLookingForGameSessions()
     {
+        ClearList();
+
         statusText.text = "Looking for game sessions";
         statusText.gameObject.SetActive(true);
     }
