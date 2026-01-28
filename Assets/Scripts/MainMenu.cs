@@ -1,10 +1,7 @@
-using Fusion;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
-using Unity.VisualScripting;
 
 public class MainMenu : MonoBehaviour
 {
@@ -15,7 +12,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private GameObject StatusPanel;
 
     [Header("UI")]
-    [SerializeField] private Button joinButton;
+    [SerializeField] private Button browseButton;
     [SerializeField] private TMP_InputField username;
     [SerializeField] private TMP_InputField sessionNameInput;
 
@@ -80,7 +77,7 @@ public class MainMenu : MonoBehaviour
 
     private void UsernameTyped()
     {
-        joinButton.interactable = CheckValidUsername(username.text);
+        browseButton.interactable = CheckValidUsername(username.text);
     }
 
     private bool CheckValidUsername(string username)
