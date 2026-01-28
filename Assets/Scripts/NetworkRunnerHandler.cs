@@ -3,6 +3,7 @@ using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -30,8 +31,8 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
         moveAction = InputSystem.actions.FindAction("Move");
         moveAction.Enable();
 
-        // Create the NetworkSceneInfo from the current scene
-        var scene = SceneRef.FromIndex(SceneManager.GetActiveScene().buildIndex);
+        // Create the NetworkSceneInfo from the game scene
+        var scene = SceneRef.FromIndex(1);
         var sceneInfo = new NetworkSceneInfo();
         if (scene.IsValid)
         {
@@ -52,6 +53,7 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
+        Debug.Log("Player Joined the Scene");
         if (runner.IsServer)
         {
             // Create a unique position for the player
@@ -135,11 +137,14 @@ public class NetworkRunnerHandler : MonoBehaviour, INetworkRunnerCallbacks
 
     public void CreateGame(string sessionName)
     {
+        PlayerPrefs.SetString("mode", "Host");
+        PlayerPrefs.SetString("session", sessionName);
         StartGame(GameMode.Host, sessionName);
     }
 
     public void JoinGame(SessionInfo sessionInfo)
     {
+        PlayerPrefs.SetString("session", sessionInfo.Name);
         StartGame(GameMode.Client, sessionInfo.Name);
     }
 }
