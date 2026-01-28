@@ -3344,7 +3344,7 @@ MonoBehaviour:
   PlayerDetails: {fileID: 1627144963}
   CreatePanel: {fileID: 843789103}
   StatusPanel: {fileID: 444765972}
-  browseButton: {fileID: 0}
+  browseButton: {fileID: 1140513030}
   username: {fileID: 1455566792}
   sessionNameInput: {fileID: 984255269}
 --- !u!1001 &1802179085
